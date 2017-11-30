@@ -4,7 +4,6 @@ import its.secur_pass.enitities.User;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,19 +16,20 @@ public class PassReader {
 
     @Nonnull
     private static final String CVS_SPLIT = ",";
+    private CryptographicHashEncoder hashEncoder;
 
     public PassReader(@Nonnull final String filename) {
         this.filename = filename;
+        hashEncoder = SecureHashAlgorithm.SHA_512;
     }
 
     /**
      * Return user by given name. Case-sensitive.
      *
-     * @param name Not null.
-     * @return null if user can't be found.
+     * @param user Not null.
+     * @return
      */
-    @Nullable
-    public User findByName(@Nonnull final String name) {
+    public boolean isRegisteredUser(@Nonnull final User user) {
         String line = "";
 
         try (BufferedReader br = new BufferedReader(
@@ -43,8 +43,14 @@ public class PassReader {
                 if (words.length != 2)
                     throw new IllegalArgumentException("line is not valid");
 
-                if (name.equals(words[0]))
-                    return new User(words[0], words[1]);
+
+                boolean isValidName = user.getName().equals(words[0]);
+                String encryptPass = encrypt(user.getPassword());
+                LOG.debug("PassHash: " + encryptPass);
+                boolean isValidPassword = encryptPass.equals(words[1]);
+
+                if (isValidName && isValidPassword)
+                    return true;
 
             }
 
@@ -52,6 +58,10 @@ public class PassReader {
             e.printStackTrace();
         }
 
-        return null;
+        return false;
+    }
+
+    private String encrypt(String password) {
+        return hashEncoder.encrypt(password);
     }
 }

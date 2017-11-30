@@ -29,7 +29,7 @@ public class Application {
             print("====== LOGIN ======");
             User user = new User(await("Username: "), await("Password: "));
             PassReader passReader = new PassReader("passes.csv");
-            boolean isRegistered = user.equals(passReader.findByName(user.getName()));
+            boolean isRegistered = passReader.isRegisteredUser(user);
 
             print("Result: " + (isRegistered ? "User is logged in!" : "User not found!"));
         }
