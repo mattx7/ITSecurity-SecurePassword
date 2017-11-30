@@ -1,15 +1,14 @@
-group 'distributed_systems'
+group 'it-security'
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'application'
-
 
 jar {
-    baseName = 'its_secur_pass'
+    baseName = 'its_securepass'
     manifest {
-        attributes 'Main-Class': 'its.secur_pass.Application'
+        attributes 'Main-Class': 'its.Application'
     }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 sourceCompatibility = 1.8
@@ -21,19 +20,10 @@ repositories {
 
 dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
-    compile group: 'org.jetbrains', name: 'annotations', version: '13.0'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
     testCompile group: 'org.testng', name: 'testng', version: '6.11'
     testCompile "org.mockito:mockito-core:2.+"
-}
-
-task fatJar(type: Jar) {
-    baseName = 'its_secur_pass'
-    manifest {
-        attributes 'Main-Class': 'its.secur_pass.Application'
-    }
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
 }
 
 task wrapper(type: Wrapper) {
