@@ -35,7 +35,7 @@ public class PassDAO {
         // file under root directory
         if (temp == null) {
             try {
-                final Path path = Paths.get("../" + filename);
+                final Path path = Paths.get(filename);
                 if (!path.toFile().exists())
                     Files.createFile(path);
                 file = path.toFile();

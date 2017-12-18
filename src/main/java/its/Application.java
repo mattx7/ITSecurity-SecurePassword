@@ -56,7 +56,7 @@ public class Application {
         User user = new User(await("Username: "), await("Password: "));
         boolean isRegistered = PASS_DAO.isRegisteredUser(user);
 
-        print("Result: " + (isRegistered ? "User is logged in!" : "User not found!"));
+        print("Result: " + (isRegistered ? "User is logged in!" : "Username or Password is wrong!"));
     }
 
     private static void showHelp() {
