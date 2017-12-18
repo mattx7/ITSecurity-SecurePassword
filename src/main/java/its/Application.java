@@ -16,9 +16,9 @@ public class Application {
     private static final Logger LOG = Logger.getLogger(Application.class);
     private static final Console terminal = System.console();
     private static final String AWAIT_COMMAND_MARKER = "#IN> ";
-    public static final PassDAO PASS_DAO = new PassDAO("passes.csv");
-    public static final String LOGIN = "!login";
-    public static final String REGISTER = "!register";
+    private static final PassDAO PASS_DAO = new PassDAO("passes.csv");
+    private static final String LOGIN = "!login";
+    private static final String REGISTER = "!register";
 
     /**
      * Holds only the main method an instance is not necessary.

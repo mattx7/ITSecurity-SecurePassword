@@ -15,5 +15,13 @@ public class PassDAOTest {
         Assert.assertTrue(dao.isRegisteredUser(user));
     }
 
+    @Test
+    public void testRegisterAUserWithoutExistingFile() throws Exception {
+        PassDAO dao = new PassDAO("test2.csv");
+        final User user = new User("name", "1234");
+        dao.registerNewUser(user);
+        Assert.assertTrue(dao.isRegisteredUser(user));
+    }
+
 
 }

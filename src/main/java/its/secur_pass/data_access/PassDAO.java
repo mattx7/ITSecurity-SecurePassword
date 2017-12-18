@@ -9,8 +9,10 @@ import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class PassDAO {
     private static final Logger LOG = Logger.getLogger(PassDAO.class);
@@ -22,14 +24,27 @@ public class PassDAO {
     private static final String CVS_SPLIT = ",";
 
     @Nonnull
-    private URL resource;
+    private File file;
 
     public PassDAO(@Nonnull final String filename) {
         hashEncoder = SecureHashAlgorithm.SHA_256;
-        this.resource = getResource(filename);
-        if (resource == null)
-            throw new IllegalArgumentException("File does not exist");
 
+        // already existing text file under resources
+        URL temp = getClass().getClassLoader().getResource(filename);
+
+        // file under root directory
+        if (temp == null) {
+            try {
+                final Path path = Paths.get("../" + filename);
+                if (!path.toFile().exists())
+                    Files.createFile(path);
+                file = path.toFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            file = Paths.get(temp.getPath()).toFile();
+        }
     }
 
     /**
@@ -38,8 +53,11 @@ public class PassDAO {
      * @param user Not null.
      */
     public void registerNewUser(@Nonnull final User user) {
-        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(resource.toExternalForm())))) {
+        try (BufferedWriter out =
+                     new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
+
             final SecureHashResult secureHashResult = hashEncoder.encrypt(user.getPassword());
+
             out.write(user.getName());
             out.write(CVS_SPLIT);
             out.write(secureHashResult.getSaltStr());
@@ -47,6 +65,7 @@ public class PassDAO {
             out.write(secureHashResult.getHashStr());
             out.flush();
             out.close();
+
             LOG.info("Saves user " + user.getName() + " with: " + secureHashResult.getSaltStr() + ", " + secureHashResult.getHashStr());
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,7 +81,7 @@ public class PassDAO {
     public boolean isRegisteredUser(@Nonnull final User user) {
         String line = "";
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(resource.openStream()))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
 
             while ((line = in.readLine()) != null) {
                 // use comma as separator
@@ -85,7 +104,7 @@ public class PassDAO {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
 
         return false;
@@ -93,12 +112,7 @@ public class PassDAO {
 
     private String[] createUser(final String line) {
         String[] words = line.split(CVS_SPLIT);
-
         Preconditions.checkState(words.length == 3);
         return words;
-    }
-
-    private URL getResource(final @Nonnull String filename) {
-        return getClass().getClassLoader().getResource(filename);
     }
 }
