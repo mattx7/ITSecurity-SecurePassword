@@ -1,7 +1,7 @@
 package its;
 
+import its.secur_pass.data_access.PassDAO;
 import its.secur_pass.enitities.User;
-import its.secur_pass.utility.PassDAO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -15,10 +15,10 @@ import java.net.URISyntaxException;
 public class Application {
     private static final Logger LOG = Logger.getLogger(Application.class);
     private static final Console terminal = System.console();
-    private static final String AWAIT_COMMAND_MARKER = "#IN>";
+    private static final String AWAIT_COMMAND_MARKER = "#IN> ";
     public static final PassDAO PASS_DAO = new PassDAO("passes.csv");
     public static final String LOGIN = "!login";
-    public static final String REGISTRATION = "!registration";
+    public static final String REGISTER = "!register";
 
     /**
      * Holds only the main method an instance is not necessary.
@@ -35,7 +35,7 @@ public class Application {
 
             if (await(AWAIT_COMMAND_MARKER).equalsIgnoreCase(LOGIN))
                 handleLogin();
-            else if (await(AWAIT_COMMAND_MARKER).equalsIgnoreCase(REGISTRATION))
+            else if (await(AWAIT_COMMAND_MARKER).equalsIgnoreCase(REGISTER))
                 handleRegistration();
             else
                 showHelp();
@@ -48,12 +48,7 @@ public class Application {
         User user = new User(
                 await("Username: "),
                 await("Password: "));
-    }
-
-    private static void showHelp() {
-        print("Commands: \n" +
-                LOGIN + " \n" +
-                REGISTRATION);
+        PASS_DAO.registerNewUser(user);
     }
 
     private static void handleLogin() {
@@ -62,6 +57,12 @@ public class Application {
         boolean isRegistered = PASS_DAO.isRegisteredUser(user);
 
         print("Result: " + (isRegistered ? "User is logged in!" : "User not found!"));
+    }
+
+    private static void showHelp() {
+        print("Commands: \n" +
+                LOGIN + " \n" +
+                REGISTER);
     }
 
     @Nonnull

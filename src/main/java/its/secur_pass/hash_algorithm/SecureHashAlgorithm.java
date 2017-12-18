@@ -1,4 +1,6 @@
-package its.secur_pass.utility;
+package its.secur_pass.hash_algorithm;
+
+import its.secur_pass.utility.ByteHexConverter;
 
 import javax.annotation.Nonnull;
 import java.security.MessageDigest;

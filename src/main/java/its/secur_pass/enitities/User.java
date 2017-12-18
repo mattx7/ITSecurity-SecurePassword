@@ -20,17 +20,9 @@ public class User {
         return name;
     }
 
-    public void setName(@Nonnull String name) {
-        this.name = name;
-    }
-
     @Nonnull
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(@Nonnull String password) {
-        this.password = password;
     }
 
     @Override

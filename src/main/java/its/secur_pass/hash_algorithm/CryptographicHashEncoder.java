@@ -1,4 +1,4 @@
-package its.secur_pass.utility;
+package its.secur_pass.hash_algorithm;
 
 import javax.annotation.Nonnull;
 

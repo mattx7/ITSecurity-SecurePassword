@@ -1,7 +1,10 @@
-package its.secur_pass.utility;
+package its.secur_pass.data_access;
 
 import com.google.common.base.Preconditions;
 import its.secur_pass.enitities.User;
+import its.secur_pass.hash_algorithm.CryptographicHashEncoder;
+import its.secur_pass.hash_algorithm.SecureHashAlgorithm;
+import its.secur_pass.hash_algorithm.SecureHashResult;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -11,7 +14,6 @@ import java.net.URL;
 
 public class PassDAO {
     private static final Logger LOG = Logger.getLogger(PassDAO.class);
-
 
     @Nonnull
     private CryptographicHashEncoder hashEncoder;
@@ -36,7 +38,7 @@ public class PassDAO {
      * @param user Not null.
      */
     public void registerNewUser(@Nonnull final User user) {
-        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(resource.toURI()))))) {
+        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(resource.toExternalForm())))) {
             final SecureHashResult secureHashResult = hashEncoder.encrypt(user.getPassword());
             out.write(user.getName());
             out.write(CVS_SPLIT);
@@ -46,7 +48,7 @@ public class PassDAO {
             out.flush();
             out.close();
             LOG.info("Saves user " + user.getName() + " with: " + secureHashResult.getSaltStr() + ", " + secureHashResult.getHashStr());
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
