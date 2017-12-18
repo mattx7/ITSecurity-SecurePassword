@@ -8,8 +8,12 @@ public interface CryptographicHashEncoder {
      * Encrypt a string.
      *
      * @param string Not null.
-     * @return Hashed string.
+     * @return Hashed string with the used salt.
      */
-    String encrypt(@Nonnull String string);
+    SecureHashResult encrypt(@Nonnull String string);
+
+    SecureHashResult encrypt(@Nonnull String salt, @Nonnull String string);
+
+    SecureHashResult encrypt(@Nonnull byte[] salt, @Nonnull String string);
 
 }

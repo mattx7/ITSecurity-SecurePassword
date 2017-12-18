@@ -17,26 +17,36 @@ public enum SecureHashAlgorithm implements CryptographicHashEncoder {
         this.version = version;
     }
 
-    public String encrypt(@Nonnull String string) {
-        String generatedPassword = null;
+    @Nonnull
+    public SecureHashResult encrypt(@Nonnull String string) {
         try {
-            MessageDigest md = MessageDigest.getInstance(version);
-            md.update(getSalt());
-            byte[] bytes = md.digest(string.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte aByte : bytes) {
-                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-            }
-            generatedPassword = sb.toString();
+            return encrypt(getSalt(), string);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return generatedPassword;
     }
 
+    @Override
+    public SecureHashResult encrypt(@Nonnull final String salt,
+                                    @Nonnull final String string) {
+        return encrypt(ByteHexConverter.convert(salt), string);
+    }
 
-    private static byte[] getSalt() throws NoSuchAlgorithmException {
-        SecureRandom random = SecureRandom.getInstance("SHA1PRNG"); // TODO maybe?
+    @Override
+    public SecureHashResult encrypt(@Nonnull final byte[] salt,
+                                    @Nonnull final String string) {
+        try {
+            MessageDigest sha = MessageDigest.getInstance(version);
+            sha.update(salt);
+
+            return new SecureHashResult(salt, sha.digest(string.getBytes()));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private byte[] getSalt() throws NoSuchAlgorithmException {
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
         random.nextBytes(salt);
         return salt;
