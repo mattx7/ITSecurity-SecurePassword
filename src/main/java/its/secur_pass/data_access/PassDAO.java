@@ -1,7 +1,7 @@
 package its.secur_pass.data_access;
 
 import com.google.common.base.Preconditions;
-import its.secur_pass.enitities.User;
+import its.secur_pass.entities.User;
 import its.secur_pass.hash_algorithm.CryptographicHashEncoder;
 import its.secur_pass.hash_algorithm.SecureHashAlgorithm;
 import its.secur_pass.hash_algorithm.SecureHashResult;

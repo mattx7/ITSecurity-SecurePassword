@@ -1,4 +1,4 @@
-package its.secur_pass.enitities;
+package its.secur_pass.entities;
 
 import javax.annotation.Nonnull;
 

@@ -1,7 +1,7 @@
 package its.secur_pass.utility;
 
 import its.secur_pass.data_access.PassDAO;
-import its.secur_pass.enitities.User;
+import its.secur_pass.entities.User;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
